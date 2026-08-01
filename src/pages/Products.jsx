@@ -1,7 +1,17 @@
 import { useState } from "react";
-import Sidebar from "../components/Sidebar";
+import { HiOutlinePencil, HiOutlinePlus, HiOutlineSearch, HiOutlineTrash } from "react-icons/hi";
+import Layout from "../components/Layout";
+import Card from "../components/Card";
+import DataTable from "../components/DataTable";
+import Button from "../components/Button";
+import Badge from "../components/Badge";
+import { Input } from "../components/Input";
+import ConfirmDialog from "../components/ConfirmDialog";
+import { useToast } from "../context/ToastContext";
 
 function Products() {
+  const toast = useToast();
+
   const [products, setProducts] = useState([
     { id: 1, name: "Rice", price: 60, stock: 25 },
     { id: 2, name: "Oil", price: 180, stock: 8 },
@@ -13,11 +23,11 @@ function Products() {
   const [stock, setStock] = useState("");
   const [editId, setEditId] = useState(null);
   const [search, setSearch] = useState("");
+  const [pendingDelete, setPendingDelete] = useState(null);
 
-  // Add Product
   const addProduct = () => {
     if (!name || !price || !stock) {
-      alert("Please fill all fields");
+      toast.error("Please fill all fields");
       return;
     }
 
@@ -29,15 +39,13 @@ function Products() {
     };
 
     setProducts([...products, newProduct]);
-
     setName("");
     setPrice("");
     setStock("");
 
-    alert("✅ Product Added Successfully");
+    toast.success("Product Added Successfully");
   };
 
-  // Edit Product
   const editProduct = (product) => {
     setEditId(product.id);
     setName(product.name);
@@ -45,190 +53,122 @@ function Products() {
     setStock(product.stock);
   };
 
-  // Update Product
   const updateProduct = () => {
     const updated = products.map((p) =>
-      p.id === editId
-        ? {
-            ...p,
-            name,
-            price,
-            stock,
-          }
-        : p
+      p.id === editId ? { ...p, name, price, stock } : p
     );
 
     setProducts(updated);
-
     setEditId(null);
     setName("");
     setPrice("");
     setStock("");
 
-    alert("✅ Product Updated Successfully");
+    toast.success("Product Updated Successfully");
   };
 
-  // Delete Product
-  const deleteProduct = (id) => {
-    if (!window.confirm("Delete this product?")) return;
-
-    setProducts(products.filter((p) => p.id !== id));
-
-    alert("🗑 Product Deleted Successfully");
+  const deleteProduct = () => {
+    setProducts(products.filter((p) => p.id !== pendingDelete.id));
+    toast.success("Product Deleted Successfully");
+    setPendingDelete(null);
   };
 
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  const columns = [
+    { key: "id", header: "ID", cell: (r) => r.id },
+    { key: "name", header: "Product Name", cell: (r) => r.name },
+    { key: "price", header: "Price", cell: (r) => `₹${r.price}` },
+    {
+      key: "stock",
+      header: "Stock",
+      cell: (r) => (
+        <Badge tone={Number(r.stock) <= 5 ? "danger" : "success"}>
+          {r.stock}
+        </Badge>
+      ),
+    },
+    {
+      key: "action",
+      header: "Action",
+      cell: (r) => (
+        <div className="flex justify-end gap-2 sm:justify-start">
+          <button
+            onClick={() => editProduct(r)}
+            className="inline-flex items-center gap-1 rounded-lg bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950 dark:text-emerald-300"
+          >
+            <HiOutlinePencil className="h-3.5 w-3.5" /> Edit
+          </button>
+          <button
+            onClick={() => setPendingDelete(r)}
+            className="inline-flex items-center gap-1 rounded-lg bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100 dark:bg-red-950 dark:text-red-300"
+          >
+            <HiOutlineTrash className="h-3.5 w-3.5" /> Delete
+          </button>
+        </div>
+      ),
+    },
+  ];
+
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
-      <Sidebar />
-
-      <div
-        style={{
-          flex: 1,
-          padding: "30px",
-          background: "#F1F5F9",
-        }}
-      >
-        <h1>📦 Product Management</h1>
-
-        <input
-          type="text"
-          placeholder="🔍 Search Product..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{
-            width: "300px",
-            padding: "10px",
-            marginBottom: "20px",
-            borderRadius: "5px",
-            border: "1px solid #ccc",
-          }}
-        />
-
-        <br />
-
-        <input
-          type="text"
-          placeholder="Product Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          style={{ padding: "10px", margin: "10px" }}
-        />
-
-        <input
-          type="number"
-          placeholder="Price"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          style={{ padding: "10px", margin: "10px" }}
-        />
-
-        <input
-          type="number"
-          placeholder="Stock"
-          value={stock}
-          onChange={(e) => setStock(e.target.value)}
-          style={{ padding: "10px", margin: "10px" }}
-        />
-
-        <button
-          onClick={editId ? updateProduct : addProduct}
-          style={{
-            padding: "10px 20px",
-            background: editId ? "#2563EB" : "#16A34A",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          {editId ? "💾 Update Product" : "➕ Add Product"}
-        </button>
-
-        <table
-          border="1"
-          cellPadding="10"
-          style={{
-            width: "100%",
-            marginTop: "30px",
-            borderCollapse: "collapse",
-            background: "white",
-          }}
-        >
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Product Name</th>
-              <th>Price</th>
-              <th>Stock</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {filteredProducts.map((product) => (
-              <tr key={product.id}>
-                <td>{product.id}</td>
-                <td>{product.name}</td>
-                <td>₹{product.price}</td>
-                <td>
-                  <span
-                    style={{
-                      color: product.stock <= 5 ? "red" : "green",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {product.stock}
-                  </span>
-                </td>
-
-                <td>
-                  <button
-                    onClick={() => editProduct(product)}
-                    style={{
-                      background: "#16A34A",
-                      color: "white",
-                      border: "none",
-                      padding: "8px 15px",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                      marginRight: "10px",
-                    }}
-                  >
-                    ✏ Edit
-                  </button>
-
-                  <button
-                    onClick={() => deleteProduct(product.id)}
-                    style={{
-                      background: "#DC2626",
-                      color: "white",
-                      border: "none",
-                      padding: "8px 15px",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    🗑 Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-
-            {filteredProducts.length === 0 && (
-              <tr>
-                <td colSpan="5" style={{ textAlign: "center", padding: "20px" }}>
-                  No Products Found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+    <Layout title="Product Management">
+      <div className="mb-6 max-w-sm">
+        <div className="relative">
+          <HiOutlineSearch className="pointer-events-none absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+          <Input
+            type="text"
+            placeholder="Search product..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-10"
+          />
+        </div>
       </div>
-    </div>
+
+      <Card title={editId ? "Edit Product" : "Add New Product"} className="mb-6">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <Input
+            label="Product Name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Input
+            label="Price"
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+          />
+          <Input
+            label="Stock"
+            type="number"
+            value={stock}
+            onChange={(e) => setStock(e.target.value)}
+          />
+        </div>
+
+        <Button
+          onClick={editId ? updateProduct : addProduct}
+          variant={editId ? "primary" : "success"}
+          className="mt-4"
+        >
+          <HiOutlinePlus className="h-4 w-4" />
+          {editId ? "Update Product" : "Add Product"}
+        </Button>
+      </Card>
+
+      <DataTable columns={columns} rows={filteredProducts} emptyMessage="No Products Found" />
+
+      <ConfirmDialog
+        open={!!pendingDelete}
+        title="Delete Product"
+        message={`Are you sure you want to delete "${pendingDelete?.name}"? This cannot be undone.`}
+        onConfirm={deleteProduct}
+        onCancel={() => setPendingDelete(null)}
+      />
+    </Layout>
   );
 }
 

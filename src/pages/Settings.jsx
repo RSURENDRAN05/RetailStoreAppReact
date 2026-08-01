@@ -1,7 +1,14 @@
 import { useState } from "react";
-import Sidebar from "../components/Sidebar";
+import { HiOutlineSave } from "react-icons/hi";
+import Layout from "../components/Layout";
+import Card from "../components/Card";
+import Button from "../components/Button";
+import { Input, Textarea } from "../components/Input";
+import { useToast } from "../context/ToastContext";
 
 function Settings() {
+  const toast = useToast();
+
   const [settings, setSettings] = useState({
     store_name: "ABC Store",
     owner_name: "Tharun",
@@ -20,129 +27,76 @@ function Settings() {
   };
 
   const saveSettings = () => {
-    alert("✅ Settings Saved Successfully (Frontend Demo)");
+    toast.success("Settings Saved Successfully (Frontend Demo)");
   };
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
-      <Sidebar />
-
-      <div
-        style={{
-          flex: 1,
-          padding: "30px",
-          background: "#F1F5F9",
-        }}
-      >
-        <h1>⚙ Store Settings</h1>
-
-        <div
-          style={{
-            background: "#fff",
-            padding: "25px",
-            borderRadius: "10px",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-            maxWidth: "700px",
-          }}
-        >
-          <label><b>🏪 Store Name</b></label>
-          <input
+    <Layout title="Store Settings">
+      <Card title="Store Details" className="max-w-3xl" icon="🏪">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Input
+            label="Store Name"
             name="store_name"
             value={settings.store_name}
             onChange={handleChange}
-            style={inputStyle}
           />
-
-          <label><b>👤 Owner Name</b></label>
-          <input
+          <Input
+            label="Owner Name"
             name="owner_name"
             value={settings.owner_name}
             onChange={handleChange}
-            style={inputStyle}
           />
-
-          <label><b>📞 Phone Number</b></label>
-          <input
+          <Input
+            label="Phone Number"
             name="phone"
             value={settings.phone}
             onChange={handleChange}
-            style={inputStyle}
           />
-
-          <label><b>📧 Email</b></label>
-          <input
+          <Input
+            label="Email"
             name="email"
+            type="email"
             value={settings.email}
             onChange={handleChange}
-            style={inputStyle}
           />
+        </div>
 
-          <label><b>📍 Address</b></label>
-          <textarea
+        <div className="mt-4">
+          <Textarea
+            label="Address"
             name="address"
             value={settings.address}
             onChange={handleChange}
-            rows="3"
-            style={textareaStyle}
+            rows={3}
           />
+        </div>
 
-          <label><b>🧾 GST Number</b></label>
-          <input
+        <div className="mt-4">
+          <Input
+            label="GST Number"
             name="gst"
             value={settings.gst}
             onChange={handleChange}
-            style={inputStyle}
           />
+        </div>
 
-          <label><b>📝 Invoice Footer</b></label>
-          <textarea
+        <div className="mt-4">
+          <Textarea
+            label="Invoice Footer"
             name="invoice_footer"
             value={settings.invoice_footer}
             onChange={handleChange}
-            rows="3"
-            style={textareaStyle}
+            rows={3}
           />
-
-          <button
-            onClick={saveSettings}
-            style={{
-              marginTop: "20px",
-              padding: "12px 25px",
-              background: "#2563EB",
-              color: "white",
-              border: "none",
-              borderRadius: "6px",
-              cursor: "pointer",
-              fontWeight: "bold",
-              fontSize: "15px",
-            }}
-          >
-            💾 Save Settings
-          </button>
         </div>
-      </div>
-    </div>
+
+        <Button onClick={saveSettings} className="mt-6">
+          <HiOutlineSave className="h-4 w-4" />
+          Save Settings
+        </Button>
+      </Card>
+    </Layout>
   );
 }
-
-const inputStyle = {
-  width: "100%",
-  padding: "12px",
-  margin: "8px 0 18px",
-  border: "1px solid #CBD5E1",
-  borderRadius: "6px",
-  fontSize: "15px",
-  boxSizing: "border-box",
-};
-
-const textareaStyle = {
-  width: "100%",
-  padding: "12px",
-  margin: "8px 0 18px",
-  border: "1px solid #CBD5E1",
-  borderRadius: "6px",
-  fontSize: "15px",
-  boxSizing: "border-box",
-};
 
 export default Settings;

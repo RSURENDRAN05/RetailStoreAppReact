@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -oE \"Hi\\(Outline\\)?[A-Za-z]+\" \"d:/Software Development/Retail Projects/RetailStoreAppReact/RetailStoreAppReact/node_modules/react-icons/hi/index.d.ts\" | sort -u > /tmp/hi_icons.txt; wc -l /tmp/hi_icons.txt)",
+      "Bash(git -C \"d:/Software Development/Retail Projects/RetailStoreAppReact/RetailStoreAppReact\" mv src/pages/billhistory.jsx src/pages/BillHistory.jsx)",
+      "Bash(npx --yes playwright --version)",
+      "Bash(node -e \"require\\('playwright'\\)\")",
+      "Bash(node -e \"console.log\\(require.resolve\\('playwright'\\)\\)\")",
+      "Bash(npx --yes -p playwright node \"C:/Users/User/AppData/Local/Temp/claude/d--Software-Development-Retail-Projects-RetailStoreAppReact-RetailStoreAppReact/c3544dd3-4185-40fe-9664-191a49328291/scratchpad/verify.js\")",
+      "Bash(npm root *)",
+      "Read(//c/Users/User/AppData/Local/npm-cache/_npx/**)",
+      "Bash(find \"$HOME/AppData/Local/npm-cache/_npx\" -maxdepth 3 -iname \"node_modules\" 2>/dev/null)",
+      "Read(//c/Users/User/AppData/Local/npm-cache/_npx/663b9277200d10db/node_modules/**)",
+      "Read(//c/Users/User/AppData/Local/npm-cache/_npx/e41f203b7505f1fb/node_modules/**)",
+      "Bash(export NODE_PATH=\"/c/Users/User/AppData/Local/npm-cache/_npx/e41f203b7505f1fb/node_modules\")",
+      "Bash(node -e ' *)",
+      "Bash(ls \"/c/Users/User/AppData/Local/ms-playwright\" 2>/dev/null)",
+      "Read(//c/Users/User/AppData/Local/ms-playwright/**)",
+      "Bash(node \"C:/Users/User/AppData/Local/Temp/claude/d--Software-Development-Retail-Projects-RetailStoreAppReact-RetailStoreAppReact/c3544dd3-4185-40fe-9664-191a49328291/scratchpad/verify.js\")",
+      "Bash(node \"C:/Users/User/AppData/Local/Temp/claude/d--Software-Development-Retail-Projects-RetailStoreAppReact-RetailStoreAppReact/c3544dd3-4185-40fe-9664-191a49328291/scratchpad/verify2.js\")",
+      "Bash(lsof -ti:5174 -sTCP:LISTEN)",
+      "Bash(xargs -r kill)",
+      "Bash(git -C \"d:/Software Development/Retail Projects/RetailStoreAppReact/RetailStoreAppReact\" status --short)",
+      "Bash(node \"C:/Users/User/AppData/Local/Temp/claude/d--Software-Development-Retail-Projects-RetailStoreAppReact-RetailStoreAppReact/c3544dd3-4185-40fe-9664-191a49328291/scratchpad/verify3.js\")",
+      "Bash(lsof -ti:5175 -sTCP:LISTEN)"
+    ],
+    "additionalDirectories": [
+      "\\tmp"
+    ]
+  }
+}

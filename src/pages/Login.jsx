@@ -1,10 +1,14 @@
 import { useState, useRef } from "react";
-import api from "../services/api";
 import { useNavigate } from "react-router-dom";
+import { HiOutlineCamera, HiOutlineLockClosed, HiOutlineUser } from "react-icons/hi";
 import loginImage from "../assets/login.png";
+import { Input } from "../components/Input";
+import Button from "../components/Button";
+import { useToast } from "../context/ToastContext";
 
 function Login() {
   const navigate = useNavigate();
+  const toast = useToast();
   const fileInputRef = useRef(null);
 
   const [username, setUsername] = useState("");
@@ -13,19 +17,22 @@ function Login() {
   const [logo, setLogo] = useState(
     localStorage.getItem("storeLogo") || loginImage
   );
-const login = () => {
-  if (!username || !password) {
-    alert("Please enter Username and Password");
-    return;
-  }
 
-  if (username === "admin" && password === "admin") {
-    alert("✅ Login Successful");
-    navigate("/dashboard");
-  } else {
-    alert("❌ Invalid Username or Password");
-  }
-};
+  const login = (e) => {
+    e.preventDefault();
+
+    if (!username || !password) {
+      toast.error("Please enter Username and Password");
+      return;
+    }
+
+    if (username === "admin" && password === "admin") {
+      toast.success("Login Successful");
+      navigate("/dashboard");
+    } else {
+      toast.error("Invalid Username or Password");
+    }
+  };
 
   const chooseLogo = (e) => {
     const file = e.target.files[0];
@@ -46,132 +53,95 @@ const login = () => {
   };
 
   return (
-    <div
-      style={{
-        height: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "linear-gradient(135deg, #2563EB, #0F172A)",
-      }}
-    >
-      <div
-        style={{
-          width: "380px",
-          background: "rgba(255,255,255,0.95)",
-          padding: "35px",
-          borderRadius: "20px",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
-        }}
-      >
-        {/* Hidden File Input */}
-        <input
-          type="file"
-          accept="image/*"
-          ref={fileInputRef}
-          onChange={chooseLogo}
-          style={{ display: "none" }}
-        />
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-brand-700 via-brand-600 to-slate-900 p-4">
+      <div className="grid w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-2xl dark:bg-slate-900 lg:grid-cols-2">
+        {/* Brand panel — desktop only */}
+        <div className="hidden flex-col justify-between bg-gradient-to-br from-brand-600 to-slate-900 p-10 text-white lg:flex">
+          <div>
+            <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-2xl backdrop-blur-sm">
+              🏪
+            </div>
+            <h2 className="text-2xl font-bold leading-snug">
+              Store Billing Management System
+            </h2>
+            <p className="mt-3 text-sm text-brand-100">
+              Manage customers, products, billing and reports from one
+              professional dashboard — built for desktop, tablet and mobile.
+            </p>
+          </div>
+          <p className="text-xs text-brand-200">
+            © 2026 Store Billing Management System
+          </p>
+        </div>
 
-        {/* Logo */}
-        <img
-          src={logo}
-          alt="Store Logo"
-          style={{
-            width: "140px",
-            height: "140px",
-            objectFit: "contain",
-            display: "block",
-            margin: "0 auto 15px",
-            borderRadius: "10px",
-          }}
-        />
+        {/* Form panel */}
+        <form onSubmit={login} className="flex flex-col justify-center p-8 sm:p-10">
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            onChange={chooseLogo}
+            className="hidden"
+          />
 
-        {/* Choose Logo Button */}
-        <button
-          onClick={() => fileInputRef.current.click()}
-          style={{
-            display: "block",
-            margin: "0 auto 20px",
-            background: "#16A34A",
-            color: "white",
-            border: "none",
-            padding: "8px 18px",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
-        >
-          📷 Choose Logo
-        </button>
+          <div className="mx-auto mb-4 h-24 w-24 overflow-hidden rounded-xl border border-slate-200 shadow-sm dark:border-slate-700">
+            <img
+              src={logo}
+              alt="Store Logo"
+              className="h-full w-full object-contain"
+            />
+          </div>
 
-        <h2
-          style={{
-            textAlign: "center",
-            color: "#1E3A8A",
-            marginBottom: "25px",
-          }}
-        >
-          Store Billing System
-        </h2>
+          <button
+            type="button"
+            onClick={() => fileInputRef.current.click()}
+            className="mx-auto mb-6 flex items-center gap-1.5 text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400"
+          >
+            <HiOutlineCamera className="h-4 w-4" />
+            Choose Logo
+          </button>
 
-        <input
-          type="text"
-          placeholder="👤 Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          style={{
-            width: "100%",
-            padding: "12px",
-            marginBottom: "15px",
-            border: "1px solid #CBD5E1",
-            borderRadius: "8px",
-            boxSizing: "border-box",
-          }}
-        />
+          <h1 className="mb-1 text-center text-xl font-bold text-slate-900 dark:text-white">
+            Welcome Back
+          </h1>
+          <p className="mb-6 text-center text-sm text-slate-500 dark:text-slate-400">
+            Sign in to continue to your dashboard
+          </p>
 
-        <input
-          type="password"
-          placeholder="🔒 Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={{
-            width: "100%",
-            padding: "12px",
-            marginBottom: "20px",
-            border: "1px solid #CBD5E1",
-            borderRadius: "8px",
-            boxSizing: "border-box",
-          }}
-        />
+          <div className="space-y-4">
+            <div className="relative">
+              <HiOutlineUser className="pointer-events-none absolute left-3.5 top-[2.35rem] h-4 w-4 text-slate-400" />
+              <Input
+                label="Username"
+                type="text"
+                placeholder="admin"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="pl-10"
+              />
+            </div>
 
-        <button
-          onClick={login}
-          style={{
-            width: "100%",
-            padding: "12px",
-            background: "#2563EB",
-            color: "white",
-            border: "none",
-            borderRadius: "8px",
-            cursor: "pointer",
-            fontWeight: "bold",
-            fontSize: "16px",
-          }}
-        >
-          Login
-        </button>
+            <div className="relative">
+              <HiOutlineLockClosed className="pointer-events-none absolute left-3.5 top-[2.35rem] h-4 w-4 text-slate-400" />
+              <Input
+                label="Password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </div>
 
-        <p
-          style={{
-            textAlign: "center",
-            marginTop: "20px",
-            color: "#64748B",
-            fontSize: "14px",
-          }}
-        >
-          © 2026 Store Billing Management System
-        </p>
+          <Button type="submit" className="mt-6 w-full py-3 text-base">
+            Login
+          </Button>
+
+          <p className="mt-6 text-center text-xs text-slate-400 lg:hidden">
+            © 2026 Store Billing Management System
+          </p>
+        </form>
       </div>
     </div>
   );

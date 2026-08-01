@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Sidebar from "../components/Sidebar";
 import { useNavigate } from "react-router-dom";
+import { HiOutlineEye } from "react-icons/hi";
+import Layout from "../components/Layout";
+import DataTable from "../components/DataTable";
+import Loader from "../components/Loader";
 
 function BillHistory() {
   const [bills, setBills] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,82 +19,41 @@ function BillHistory() {
     axios
       .get("http://localhost:5000/bills")
       .then((res) => setBills(res.data))
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
   };
 
-  return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
-      <Sidebar />
-
-      <div
-        style={{
-          flex: 1,
-          padding: "30px",
-          background: "#F1F5F9",
-        }}
-      >
-        <h1>📄 Bill History</h1>
-
-        <table
-          border="1"
-          cellPadding="10"
-          style={{
-            width: "100%",
-            borderCollapse: "collapse",
-            marginTop: "20px",
-            background: "#fff",
-          }}
+  const columns = [
+    { key: "id", header: "Bill ID", cell: (r) => r.id },
+    { key: "customer", header: "Customer", cell: (r) => r.customer_name },
+    {
+      key: "date",
+      header: "Date",
+      cell: (r) => new Date(r.bill_date).toLocaleString(),
+    },
+    { key: "total", header: "Total", cell: (r) => `₹${r.grand_total}` },
+    {
+      key: "action",
+      header: "Action",
+      cell: (r) => (
+        <button
+          onClick={() => navigate(`/invoice/${r.id}`)}
+          className="inline-flex items-center gap-1 rounded-lg bg-brand-50 px-2.5 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-100 dark:bg-brand-950 dark:text-brand-300"
         >
-          <thead>
-            <tr>
-              <th>Bill ID</th>
-              <th>Customer</th>
-              <th>Date</th>
-              <th>Total</th>
-              <th>Action</th>
-            </tr>
-          </thead>
+          <HiOutlineEye className="h-3.5 w-3.5" /> View Invoice
+        </button>
+      ),
+    },
+  ];
 
-          <tbody>
-            {bills.length > 0 ? (
-              bills.map((bill) => (
-                <tr key={bill.id}>
-                  <td>{bill.id}</td>
-                  <td>{bill.customer_name}</td>
-                  <td>
-                    {new Date(bill.bill_date).toLocaleString()}
-                  </td>
-                  <td>₹{bill.grand_total}</td>
-                  <td>
-                    <button
-                      onClick={() =>
-                        navigate(`/invoice/${bill.id}`)
-                      }
-                      style={{
-                        padding: "8px 15px",
-                        background: "#2563EB",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "5px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      👁 View Invoice
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="5" style={{ textAlign: "center" }}>
-                  No Bills Found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
+  return (
+    <Layout title="Bill History">
+      {loading ? (
+        <Loader label="Loading bills..." />
+      ) : (
+        <DataTable columns={columns} rows={bills} emptyMessage="No Bills Found" />
+      )}
+    </Layout>
   );
 }
 

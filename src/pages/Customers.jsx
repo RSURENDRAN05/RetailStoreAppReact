@@ -1,26 +1,20 @@
 import { useState } from "react";
-import Sidebar from "../components/Sidebar";
+import { HiOutlinePencil, HiOutlinePlus, HiOutlineSearch, HiOutlineTrash } from "react-icons/hi";
+import Layout from "../components/Layout";
+import Card from "../components/Card";
+import DataTable from "../components/DataTable";
+import Button from "../components/Button";
+import { Input } from "../components/Input";
+import ConfirmDialog from "../components/ConfirmDialog";
+import { useToast } from "../context/ToastContext";
 
 function Customers() {
+  const toast = useToast();
+
   const [customers, setCustomers] = useState([
-    {
-      id: 1,
-      name: "Rahul",
-      phone: "9876543210",
-      address: "Chennai",
-    },
-    {
-      id: 2,
-      name: "Kumar",
-      phone: "9123456780",
-      address: "Trichy",
-    },
-    {
-      id: 3,
-      name: "Arun",
-      phone: "9876501234",
-      address: "Madurai",
-    },
+    { id: 1, name: "Rahul", phone: "9876543210", address: "Chennai" },
+    { id: 2, name: "Kumar", phone: "9123456780", address: "Trichy" },
+    { id: 3, name: "Arun", phone: "9876501234", address: "Madurai" },
   ]);
 
   const [name, setName] = useState("");
@@ -28,11 +22,11 @@ function Customers() {
   const [address, setAddress] = useState("");
   const [editId, setEditId] = useState(null);
   const [search, setSearch] = useState("");
+  const [pendingDelete, setPendingDelete] = useState(null);
 
-  // Add Customer
   const addCustomer = () => {
     if (!name || !phone || !address) {
-      alert("Please fill all fields");
+      toast.error("Please fill all fields");
       return;
     }
 
@@ -44,15 +38,13 @@ function Customers() {
     };
 
     setCustomers([...customers, newCustomer]);
-
     setName("");
     setPhone("");
     setAddress("");
 
-    alert("✅ Customer Added Successfully");
+    toast.success("Customer Added Successfully");
   };
 
-  // Edit Customer
   const editCustomer = (customer) => {
     setEditId(customer.id);
     setName(customer.name);
@@ -60,192 +52,114 @@ function Customers() {
     setAddress(customer.address);
   };
 
-  // Update Customer
   const updateCustomer = () => {
     const updatedCustomers = customers.map((customer) =>
-      customer.id === editId
-        ? {
-            ...customer,
-            name,
-            phone,
-            address,
-          }
-        : customer
+      customer.id === editId ? { ...customer, name, phone, address } : customer
     );
 
     setCustomers(updatedCustomers);
-
     setEditId(null);
     setName("");
     setPhone("");
     setAddress("");
 
-    alert("✅ Customer Updated Successfully");
+    toast.success("Customer Updated Successfully");
   };
 
-  // Delete Customer
-  const deleteCustomer = (id) => {
-    if (!window.confirm("Are you sure you want to delete this customer?"))
-      return;
-
-    setCustomers(customers.filter((customer) => customer.id !== id));
-
-    alert("🗑 Customer Deleted Successfully");
+  const deleteCustomer = () => {
+    setCustomers(customers.filter((customer) => customer.id !== pendingDelete.id));
+    toast.success("Customer Deleted Successfully");
+    setPendingDelete(null);
   };
 
   const filteredCustomers = customers.filter((customer) =>
     customer.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  const columns = [
+    { key: "id", header: "ID", cell: (r) => r.id },
+    { key: "name", header: "Name", cell: (r) => r.name },
+    { key: "phone", header: "Phone", cell: (r) => r.phone },
+    { key: "address", header: "Address", cell: (r) => r.address },
+    {
+      key: "action",
+      header: "Action",
+      cell: (r) => (
+        <div className="flex justify-end gap-2 sm:justify-start">
+          <button
+            onClick={() => editCustomer(r)}
+            className="inline-flex items-center gap-1 rounded-lg bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950 dark:text-emerald-300"
+          >
+            <HiOutlinePencil className="h-3.5 w-3.5" /> Edit
+          </button>
+          <button
+            onClick={() => setPendingDelete(r)}
+            className="inline-flex items-center gap-1 rounded-lg bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100 dark:bg-red-950 dark:text-red-300"
+          >
+            <HiOutlineTrash className="h-3.5 w-3.5" /> Delete
+          </button>
+        </div>
+      ),
+    },
+  ];
+
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
-      <Sidebar />
-
-      <div
-        style={{
-          flex: 1,
-          padding: "30px",
-          background: "#F1F5F9",
-        }}
-      >
-        <h1>👥 Customer Management</h1>
-
-        <input
-          type="text"
-          placeholder="🔍 Search Customer..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{
-            width: "300px",
-            padding: "10px",
-            marginBottom: "20px",
-            borderRadius: "5px",
-            border: "1px solid #ccc",
-          }}
-        />
-
-        <br />
-
-        <input
-          type="text"
-          placeholder="Customer Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          style={{ padding: "10px", margin: "10px" }}
-        />
-
-        <input
-          type="text"
-          placeholder="Phone Number"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          style={{ padding: "10px", margin: "10px" }}
-        />
-
-        <input
-          type="text"
-          placeholder="Address"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          style={{
-            padding: "10px",
-            margin: "10px",
-            width: "250px",
-          }}
-        />
-
-        <button
-          onClick={editId ? updateCustomer : addCustomer}
-          style={{
-            padding: "10px 20px",
-            background: editId ? "#2563EB" : "#16A34A",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          {editId ? "💾 Update Customer" : "➕ Add Customer"}
-        </button>
-
-        <table
-          border="1"
-          cellPadding="10"
-          style={{
-            width: "100%",
-            marginTop: "30px",
-            borderCollapse: "collapse",
-            background: "white",
-          }}
-        >
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Phone</th>
-              <th>Address</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {filteredCustomers.map((customer) => (
-              <tr key={customer.id}>
-                <td>{customer.id}</td>
-                <td>{customer.name}</td>
-                <td>{customer.phone}</td>
-                <td>{customer.address}</td>
-
-                <td>
-                  <button
-                    onClick={() => editCustomer(customer)}
-                    style={{
-                      background: "#16A34A",
-                      color: "white",
-                      border: "none",
-                      padding: "8px 15px",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                      marginRight: "10px",
-                    }}
-                  >
-                    ✏ Edit
-                  </button>
-
-                  <button
-                    onClick={() => deleteCustomer(customer.id)}
-                    style={{
-                      background: "#DC2626",
-                      color: "white",
-                      border: "none",
-                      padding: "8px 15px",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    🗑 Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-
-            {filteredCustomers.length === 0 && (
-              <tr>
-                <td
-                  colSpan="5"
-                  style={{
-                    textAlign: "center",
-                    padding: "20px",
-                  }}
-                >
-                  No Customers Found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+    <Layout title="Customer Management">
+      <div className="mb-6 max-w-sm">
+        <div className="relative">
+          <HiOutlineSearch className="pointer-events-none absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+          <Input
+            type="text"
+            placeholder="Search customer..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-10"
+          />
+        </div>
       </div>
-    </div>
+
+      <Card title={editId ? "Edit Customer" : "Add New Customer"} className="mb-6">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <Input
+            label="Customer Name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Input
+            label="Phone Number"
+            type="text"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+          />
+          <Input
+            label="Address"
+            type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+          />
+        </div>
+
+        <Button
+          onClick={editId ? updateCustomer : addCustomer}
+          variant={editId ? "primary" : "success"}
+          className="mt-4"
+        >
+          <HiOutlinePlus className="h-4 w-4" />
+          {editId ? "Update Customer" : "Add Customer"}
+        </Button>
+      </Card>
+
+      <DataTable columns={columns} rows={filteredCustomers} emptyMessage="No Customers Found" />
+
+      <ConfirmDialog
+        open={!!pendingDelete}
+        title="Delete Customer"
+        message={`Are you sure you want to delete "${pendingDelete?.name}"? This cannot be undone.`}
+        onConfirm={deleteCustomer}
+        onCancel={() => setPendingDelete(null)}
+      />
+    </Layout>
   );
 }
 

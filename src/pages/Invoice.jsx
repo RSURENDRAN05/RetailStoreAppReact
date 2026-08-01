@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { HiOutlinePrinter } from "react-icons/hi";
+import Loader from "../components/Loader";
 
 function Invoice() {
   const { id } = useParams();
@@ -24,140 +26,101 @@ function Invoice() {
     }
   };
 
-  if (!bill || !settings) return <h2>Loading...</h2>;
+  if (!bill || !settings) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-100 dark:bg-slate-950">
+        <Loader label="Loading invoice..." />
+      </div>
+    );
+  }
 
   return (
-    <div
-      style={{
-        maxWidth: "900px",
-        margin: "30px auto",
-        padding: "30px",
-        background: "#fff",
-        border: "1px solid #ddd",
-      }}
-    >
-      {/* Store Details */}
-
-      <div style={{ textAlign: "center" }}>
-        <h1>{settings.store_name.toUpperCase()}</h1>
-
-        <p>
-          <b>Owner :</b> {settings.owner_name}
-        </p>
-
-        <p>
-          <b>Phone :</b> {settings.phone}
-        </p>
-
-        <p>
-          <b>Email :</b> {settings.email}
-        </p>
-
-        <p>
-          <b>Address :</b> {settings.address}
-        </p>
-
-        <p>
-          <b>GST :</b> {settings.gst}
-        </p>
-
-        <hr />
-      </div>
-
-      {/* Bill Details */}
-
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: "20px",
-        }}
-      >
-        <div>
-          <h3>Customer : {bill.customer_name}</h3>
+    <div className="min-h-screen bg-slate-100 px-4 py-8 dark:bg-slate-950 print:bg-white print:p-0">
+      <div className="mx-auto max-w-3xl rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-10 print:max-w-none print:rounded-none print:border-none print:p-0 print:shadow-none">
+        {/* Store Details */}
+        <div className="border-b border-slate-100 pb-6 text-center dark:border-slate-800">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+            {settings.store_name.toUpperCase()}
+          </h1>
+          <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+            <span className="font-semibold">Owner:</span> {settings.owner_name}
+          </p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            <span className="font-semibold">Phone:</span> {settings.phone}
+          </p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            <span className="font-semibold">Email:</span> {settings.email}
+          </p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            <span className="font-semibold">Address:</span> {settings.address}
+          </p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            <span className="font-semibold">GST:</span> {settings.gst}
+          </p>
         </div>
 
-        <div style={{ textAlign: "right" }}>
-          <h3>Invoice No : {bill.id}</h3>
-          <p>{new Date(bill.bill_date).toLocaleString()}</p>
+        {/* Bill Details */}
+        <div className="flex flex-col justify-between gap-2 py-6 sm:flex-row">
+          <h3 className="text-base font-semibold text-slate-900 dark:text-white">
+            Customer: {bill.customer_name}
+          </h3>
+          <div className="text-left sm:text-right">
+            <h3 className="text-base font-semibold text-slate-900 dark:text-white">
+              Invoice No: {bill.id}
+            </h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              {new Date(bill.bill_date).toLocaleString()}
+            </p>
+          </div>
         </div>
-      </div>
 
-      {/* Items */}
+        {/* Items */}
+        <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:bg-slate-800/60 dark:text-slate-400">
+              <tr>
+                <th className="px-4 py-3">Product</th>
+                <th className="px-4 py-3">Qty</th>
+                <th className="px-4 py-3">Price</th>
+                <th className="px-4 py-3">Total</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              {bill.items.map((item, index) => (
+                <tr key={index} className="text-slate-700 dark:text-slate-300">
+                  <td className="px-4 py-3">{item.name}</td>
+                  <td className="px-4 py-3">{item.quantity}</td>
+                  <td className="px-4 py-3">₹{item.price}</td>
+                  <td className="px-4 py-3">₹{item.total}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-      <table
-        border="1"
-        cellPadding="10"
-        style={{
-          width: "100%",
-          borderCollapse: "collapse",
-        }}
-      >
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Qty</th>
-            <th>Price</th>
-            <th>Total</th>
-          </tr>
-        </thead>
+        {/* Grand Total */}
+        <div className="mt-6 text-right">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+            Grand Total: ₹{bill.grand_total}
+          </h2>
+        </div>
 
-        <tbody>
-          {bill.items.map((item, index) => (
-            <tr key={index}>
-              <td>{item.name}</td>
-              <td>{item.quantity}</td>
-              <td>₹{item.price}</td>
-              <td>₹{item.total}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+        <hr className="my-6 border-slate-100 dark:border-slate-800" />
 
-      {/* Grand Total */}
+        {/* Footer */}
+        <p className="text-center text-sm font-medium text-slate-600 dark:text-slate-400">
+          {settings.invoice_footer}
+        </p>
 
-      <div
-        style={{
-          textAlign: "right",
-          marginTop: "20px",
-        }}
-      >
-        <h2>Grand Total : ₹{bill.grand_total}</h2>
-      </div>
-
-      <hr />
-
-      {/* Footer */}
-
-      <div
-        style={{
-          textAlign: "center",
-          marginTop: "30px",
-        }}
-      >
-        <h3>{settings.invoice_footer}</h3>
-      </div>
-
-      <div
-        style={{
-          textAlign: "center",
-          marginTop: "20px",
-        }}
-      >
-        <button
-          onClick={() => window.print()}
-          style={{
-            padding: "12px 30px",
-            background: "#2563EB",
-            color: "#fff",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontSize: "16px",
-          }}
-        >
-          🖨 Print Invoice
-        </button>
+        <div className="mt-8 text-center print:hidden">
+          <button
+            onClick={() => window.print()}
+            className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-brand-700"
+          >
+            <HiOutlinePrinter className="h-4 w-4" />
+            Print Invoice
+          </button>
+        </div>
       </div>
     </div>
   );
