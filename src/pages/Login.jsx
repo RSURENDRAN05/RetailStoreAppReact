@@ -10,7 +10,7 @@ function Login() {
   const navigate = useNavigate();
   const toast = useToast();
   const fileInputRef = useRef(null);
-
+  const [shopId, setShopId] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -21,12 +21,16 @@ function Login() {
   const login = (e) => {
     e.preventDefault();
 
-    if (!username || !password) {
-      toast.error("Please enter Username and Password");
-      return;
-    }
+    if (!shopId || !username || !password) {
+  toast.error("Please enter Shop ID, Username and Password");
+  return;
+}
 
-    if (username === "admin" && password === "admin") {
+    if (
+  shopId === "SHOP001" &&
+  username === "admin" &&
+  password === "admin"
+) {
       toast.success("Login Successful");
       navigate("/dashboard");
     } else {
@@ -111,7 +115,15 @@ function Login() {
           <div className="space-y-4">
             <div className="relative">
               <HiOutlineUser className="pointer-events-none absolute left-3.5 top-[2.35rem] h-4 w-4 text-slate-400" />
-              <Input
+              <div className="relative">
+  <Input
+    label="Shop ID"
+    type="text"
+    placeholder="SHOP001"
+    value={shopId}
+    onChange={(e) => setShopId(e.target.value)}
+  />
+</div><Input
                 label="Username"
                 type="text"
                 placeholder="admin"

@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
 import Customers from "./pages/Customers";
 import Products from "./pages/Products";
 import Billing from "./pages/Billing";
@@ -19,6 +20,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/customers" element={<Customers />} />
             <Route path="/products" element={<Products />} />
             <Route path="/billing" element={<Billing />} />
@@ -26,6 +28,7 @@ function App() {
             <Route path="/settings" element={<Settings />} />
             <Route path="/bill-history" element={<BillHistory />} />
             <Route path="/invoice/:id" element={<Invoice />} />
+          
           </Routes>
         </BrowserRouter>
       </ToastProvider>

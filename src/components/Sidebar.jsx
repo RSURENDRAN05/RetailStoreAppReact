@@ -7,11 +7,13 @@ import {
   HiOutlineDocumentText,
   HiOutlineChartBar,
   HiOutlineCog,
+  HiOutlineUserCircle,
   HiX,
 } from "react-icons/hi";
 
 const NAV_ITEMS = [
   { to: "/dashboard", label: "Dashboard", icon: HiOutlineViewGrid },
+  { to: "/profile", label: "My Profile", icon: HiOutlineUserCircle },
   { to: "/customers", label: "Customers", icon: HiOutlineUsers },
   { to: "/products", label: "Products", icon: HiOutlineCube },
   { to: "/billing", label: "Billing", icon: HiOutlineReceiptTax },

@@ -8,6 +8,8 @@ import Badge from "../components/Badge";
 import { Input } from "../components/Input";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { useToast } from "../context/ToastContext";
+import ProductHeader from "../components/ProductHeader";
+import ProductStats from "../components/ProductStats";
 
 function Products() {
   const toast = useToast();
@@ -114,6 +116,15 @@ function Products() {
 
   return (
     <Layout title="Product Management">
+      <ProductHeader
+  onAddProduct={() => {
+    document.getElementById("productForm")?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }}
+/>
+
+<ProductStats />
       <div className="mb-6 max-w-sm">
         <div className="relative">
           <HiOutlineSearch className="pointer-events-none absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
@@ -127,7 +138,11 @@ function Products() {
         </div>
       </div>
 
-      <Card title={editId ? "Edit Product" : "Add New Product"} className="mb-6">
+      <Card
+  id="productForm"
+  title={editId ? "Edit Product" : "Add Product"}
+  className="mb-6"
+>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Input
             label="Product Name"

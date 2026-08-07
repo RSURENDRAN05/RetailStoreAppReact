@@ -5,6 +5,7 @@ import Card from "../components/Card";
 import Button from "../components/Button";
 import { Input, Textarea } from "../components/Input";
 import { useToast } from "../context/ToastContext";
+import SettingsHeader from "../components/SettingsHeader";
 
 function Settings() {
   const toast = useToast();
@@ -32,6 +33,7 @@ function Settings() {
 
   return (
     <Layout title="Store Settings">
+      <SettingsHeader />
       <Card title="Store Details" className="max-w-3xl" icon="🏪">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Input

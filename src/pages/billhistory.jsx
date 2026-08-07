@@ -16,8 +16,7 @@ function BillHistory() {
   }, []);
 
   const loadBills = () => {
-    axios
-      .get("http://localhost:5000/bills")
+    axios.get("http://localhost:5000/bills")
       .then((res) => setBills(res.data))
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));

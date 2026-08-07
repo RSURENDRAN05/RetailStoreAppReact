@@ -7,6 +7,8 @@ import Button from "../components/Button";
 import { Input } from "../components/Input";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { useToast } from "../context/ToastContext";
+import CustomerStats from "../components/CustomerStats";
+import CustomerHeader from "../components/CustomerHeader";
 
 function Customers() {
   const toast = useToast();
@@ -105,6 +107,14 @@ function Customers() {
 
   return (
     <Layout title="Customer Management">
+      <CustomerHeader
+  onAddCustomer={() => {
+    document.getElementById("customerForm")?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }}
+/>
+      <CustomerStats />
       <div className="mb-6 max-w-sm">
         <div className="relative">
           <HiOutlineSearch className="pointer-events-none absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
@@ -118,7 +128,11 @@ function Customers() {
         </div>
       </div>
 
-      <Card title={editId ? "Edit Customer" : "Add New Customer"} className="mb-6">
+  <Card
+  id="customerForm"
+  title={editId ? "Edit Customer" : "Add New Customer"}
+  className="mb-6"
+>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Input
             label="Customer Name"

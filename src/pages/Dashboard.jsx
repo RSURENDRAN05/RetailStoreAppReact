@@ -10,6 +10,8 @@ import Card, { StatCard } from "../components/Card";
 import Badge from "../components/Badge";
 import DataTable from "../components/DataTable";
 import { formatCurrency } from "../utils/format";
+import DashboardHeader from "../components/DashboardHeader";
+import DashboardStats from "../components/DashboardStats";
 
 function Dashboard() {
   const [stats] = useState({
@@ -35,39 +37,18 @@ function Dashboard() {
       cell: () => <Badge tone="danger">Low Stock</Badge>,
     },
   ];
+ 
+
 
   return (
     <Layout title="Dashboard">
+      <DashboardHeader />
+<DashboardStats />
       <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
         Welcome back, Admin 👋 — here's what's happening in your store today.
       </p>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard
-          label="Total Bills"
-          value={stats.totalBills}
-          icon={<HiOutlineReceiptTax />}
-          accent="brand"
-        />
-        <StatCard
-          label="Total Sales"
-          value={formatCurrency(stats.totalSales)}
-          icon={<HiOutlineCurrencyRupee />}
-          accent="emerald"
-        />
-        <StatCard
-          label="Customers"
-          value={stats.totalCustomers}
-          icon={<HiOutlineUsers />}
-          accent="amber"
-        />
-        <StatCard
-          label="Products"
-          value={stats.totalProducts}
-          icon={<HiOutlineCube />}
-          accent="rose"
-        />
-      </div>
+      
 
       <div className="mt-6">
         <Card title="Low Stock Products" icon="⚠️">
