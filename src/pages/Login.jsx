@@ -27,7 +27,7 @@ function Login() {
 }
 
     if (
-  shopId === "SHOP001" &&
+  shopId === "1" &&
   username === "admin" &&
   password === "admin"
 ) {
